@@ -32,3 +32,7 @@ El codigo relevante al "API" se encuentra en app.js.
 ### UI ###
 
 El codigo del navegador se encuentra en la carpeta public/ en dos archivos: index.html y js/main.js.
+
+## Licencia ##
+
+Este ejemplo cuenta con una licencia [MIT](http://opensource.org/licenses/MIT)
