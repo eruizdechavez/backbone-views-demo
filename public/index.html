@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>views-test</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<button id="btn-agregar" class="btn"><i class="icon-plus"></i> Agregar Patrocinador</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="span12">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Nombre</th>
+							<th>URL</th>
+							<th>Banner</th>
+						</tr>
+					</thead>
+					<tbody id="tabla"></tbody>
+				</table>
+			</div>
+		</div>
+
+		<div id="formulario-modal" class="modal hide fade">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>Agregar Patrocinador</h3>
+			</div>
+			<div class="modal-body">
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary">Agregar Patrocinador</button>
+				<button type="submit" class="btn" data-dismiss="modal">Cancelar</button>
+			</div>
+		</div>
+
+	</div>
+
+	<div id="templates">
+		<div id="formulario">
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label class="control-label" for="inputNombre">Nombre</label>
+					<div class="controls">
+						<input type="text" id="inputNombre" placeholder="Nombre">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="inputURL">URL</label>
+					<div class="controls">
+						<input type="text" id="inputURL" placeholder="URL">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label" for="inputBanner">Banner</label>
+					<div class="controls">
+						<input type="text" id="inputBanner" placeholder="Banner">
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls">
+					</div>
+				</div>
+			</form>
+
+		</div>
+		<div>
+			<table>
+				<thead>
+					<tr>
+						<th>Nombre</th>
+						<th>URL</th>
+						<th>Banner</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="patrocinador">
+						<td>{{ nombre }}</td>
+						<td>{{ url }}</td>
+						<td>{{ banner }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
+	<script type="text/javascript" src="js/underscore-min.js"></script>
+	<script type="text/javascript" src="js/backbone-min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
