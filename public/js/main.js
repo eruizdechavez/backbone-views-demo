@@ -43,27 +43,10 @@ $(function(){
 		initialize: function() {
 			_.bindAll(this);
 
-			// Con this.options podemos accesar a todos los valores que nos hayan
-			// pasado con "new"; salvamos los que nos interesen y pasamos los que
-			// sean requeridos en las vistas secundarias.
+			// Con this.options podemos accesar a todos los valores que nos hayan pasado con "new"
 
 			this.fc = this.options.fc;
 			this.template_patrocinador = this.options.template_patrocinador;
-
-			// Vista del dialogo para agregar nuevos registros.
-			var agregar = new AgregarView({
-				el: this.options.el_agregar,
-				fc: this.fc,
-				template: this.options.template_agregar
-			});
-
-			// Vista del boton para abrir el dialogo agegar. Esta es una vista aparte
-			// pues la vista de tabla en este ejemplo se crea a partir del "tbody" por
-			// lo que el boton esta fuera del scope de events.
-			var btn_agregar = new BotonAgregarView({
-				el: this.options.el_boton_agregar,
-				fc: this.fc
-			});
 
 			// Bindeamos eventos del modelo a metodos de la vista.
 			this.listenTo(this.model, 'reset', this.render);
@@ -119,6 +102,8 @@ $(function(){
 
 	// Una vista muy sencilla de un boton, en este caso tiene referencia de
 	var BotonAgregarView = Backbone.View.extend({
+		CLICK: 'boton_agregar_view.click',
+
 		modal: null,
 
 		initialize: function() {
@@ -136,12 +121,14 @@ $(function(){
 			// Front Controller para poder notificar cuando le hayan dado clic.
 			// De esta manera en teoria cualquier vista podria escuchar dicho evento
 			// y reaccionar de la forma que mejor le convenga.
-			this.fc.trigger('boton_agregar_view.click');
+			this.fc.trigger(this.CLICK);
 		}
 	});
 
 	// Vista para el dialogo de Agregar
 	var AgregarView = Backbone.View.extend({
+		ADD: 'agregar_view.add',
+
 		template: null,
 		fc: null,
 
@@ -159,7 +146,7 @@ $(function(){
 
 			// Bindeamos el evento del Front Controller que nos interesa conocer
 			// cuando piden mostrar el dialogo (cuando dan click al boton agregar)
-			this.listenTo(this.fc, 'boton_agregar_view.click', this.show);
+			this.listenTo(this.fc, BotonAgregarView.prototype.CLICK, this.show);
 		},
 
 		render: function() {
@@ -178,7 +165,7 @@ $(function(){
 			// saber que se va a hacer con los datos que se introdujeron, solo
 			// necesita notificar al mundo que se ha dado click al boton agregar y
 			// enviar los datos que contenga el formulario.
-			this.fc.trigger('agregar_view.add', {
+			this.fc.trigger(this.ADD, {
 				nombre: this.$('#inputNombre').val(),
 				url: this.$('#inputURL').val(),
 				banner: this.$('#inputBanner').val(),
@@ -194,7 +181,7 @@ $(function(){
 	// Bindeamos el evento del dialogo agregar a la coleccion dado que las
 	// colecciones cuentan con el metodo "create" que facilita el crear y salvar
 	// un modelo nuevo al servidor.
-	patrocinadores.listenTo(front_controller, 'agregar_view.add', function(patrocinador) {
+	patrocinadores.listenTo(front_controller, AgregarView.prototype.ADD, function(patrocinador) {
 		this.create(patrocinador);
 	});
 
@@ -203,11 +190,22 @@ $(function(){
 	// y es mas facil de reusar.
 	var tabla = new TablaView({
 		el: '#tabla',
-		el_boton_agregar: '#btn-agregar',
-		el_agregar: '#formulario-modal',
 		model:patrocinadores,
 		fc: front_controller,
 		template_patrocinador: $('#templates #patrocinador').html(),
-		template_agregar: $('#formulario').html()
 	});
+
+	// Vista del dialogo para agregar nuevos registros.
+	var agregar = new AgregarView({
+		el: '#formulario-modal',
+		fc: front_controller,
+		template: $('#formulario').html()
+	});
+
+	// Vista del boton para abrir el dialogo agegar.
+	var btn_agregar = new BotonAgregarView({
+		el: '#btn-agregar',
+		fc: front_controller
+	});
+
 });
