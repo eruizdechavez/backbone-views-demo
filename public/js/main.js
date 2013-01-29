@@ -100,7 +100,7 @@ $(function(){
 		}
 	});
 
-	// Una vista muy sencilla de un boton, en este caso tiene referencia de
+	// Una vista muy sencilla de un boton que solo dispara eventos al Front Controller
 	var BotonAgregarView = Backbone.View.extend({
 		// Las cadenas con los nombres de los eventos no deben estar referenciadas
 		// directamente por valor para evitar errores al escribir los nombres
