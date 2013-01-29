@@ -102,6 +102,11 @@ $(function(){
 
 	// Una vista muy sencilla de un boton, en este caso tiene referencia de
 	var BotonAgregarView = Backbone.View.extend({
+		// Las cadenas con los nombres de los eventos no deben estar referenciadas
+		// directamente por valor para evitar errores al escribir los nombres
+		// asi como para facilitar su implementacion; en vez de esto se deben usar
+		// "constantes simbolicas" (js no maneja el concepto de constantes como tal)
+		// con dichos valores.
 		CLICK: 'boton_agregar_view.click',
 
 		modal: null,
@@ -127,6 +132,11 @@ $(function(){
 
 	// Vista para el dialogo de Agregar
 	var AgregarView = Backbone.View.extend({
+		// Las cadenas con los nombres de los eventos no deben estar referenciadas
+		// directamente por valor para evitar errores al escribir los nombres
+		// asi como para facilitar su implementacion; en vez de esto se deben usar
+		// "constantes simbolicas" (js no maneja el concepto de constantes como tal)
+		// con dichos valores.
 		ADD: 'agregar_view.add',
 
 		template: null,
