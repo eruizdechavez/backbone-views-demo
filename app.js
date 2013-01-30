@@ -1,5 +1,6 @@
 var express = require('express'),
   http = require('http'),
+  sio = require('socket.io'),
   path = require('path'),
   util = require('util');
 
@@ -37,9 +38,25 @@ app.post('/api/patrocinadores', function(req, res) {
   p.id = patrocinadores.length + 1;
   patrocinadores.push(p);
 
-  return res.send(p);
+  res.send(p);
+
+  io.sockets.emit('message', {
+    message: 'Nuevo Patrocinador agregado!',
+    data: p,
+    selfdestroy: 10 * 1000
+  });
+
+  return;
 });
 
-http.createServer(app).listen(app.get('port'), function() {
+var server = http.createServer(app);
+server.listen(app.get('port'), function() {
   console.log("Express server listening on port " + app.get('port'));
+});
+
+var io = sio.listen(server);
+io.sockets.on('connection', function(socket) {
+  socket.on('message', function() {
+    console.log(util.inspect(arguments));
+  });
 });

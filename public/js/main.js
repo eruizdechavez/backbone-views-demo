@@ -184,6 +184,57 @@ $(function(){
 		}
 	});
 
+	// Vista de notificacion individual
+	// Avisa a los clientes que se ha agregado un nuevo Patrocinador. En caso
+	// que el mensaje contenta un valor en milisegundos en "selfdestroy" la
+	// notificacion se remueve a si misma.
+	var NotificacionView = Backbone.View.extend({
+		className: 'alert alert-info',
+		mensaje: null,
+		patrocinador: null,
+		autodestruir: null,
+
+		// Toma los datos recibidos en "new"
+		initialize: function() {
+			_.bindAll(this);
+			this.mensaje = this.options.message || "";
+			this.patrocinador = this.options.data || {};
+			this.autodestruir = this.options.selfdestroy;
+		},
+
+		// Crea el elemento DOM usando la informacion proporcionada. En caso que
+		// autodestruir contenga un valor, usa dicho numero como milisegundos
+		// para autoremoverse.
+		render: function() {
+			this.$el.text(this.mensaje + ': ' + this.patrocinador.nombre);
+			if (this.autodestruir) {
+				setTimeout(this.remove, this.autodestruir);
+			}
+			return this;
+		}
+	});
+
+	// Vista principal del notificador
+	var NotificadorView = Backbone.View.extend({
+		fc: null,
+
+		// Toma los datos de "new".
+		// Bindeamos para agregar nuevas Notificaciones segun lleguen. Es importante
+		// notar que no estamos escuchando el socket directamente sino mediante
+		// el Front Controller, lo cual nos da mas flexibilidad pues podemos
+		// emitir el evento en cualquier momento o cambiar la tecnologia usada
+		// sin afectar el codigo.
+		initialize: function() {
+			this.fc = this.options.fc;
+			this.listenTo(this.fc, 'socket.message', this.notify);
+		},
+
+		notify: function(data) {
+			var notificacion = new NotificacionView(data);
+			this.$el.append(notificacion.render().el);
+		}
+	});
+
 	// Instancia de nuestra coleccion de Patrocinador(es)
 	patrocinadores = new Patrocinadores();
 	// Con fetch obtenemos los datos del servidor.
@@ -193,6 +244,15 @@ $(function(){
 	// un modelo nuevo al servidor.
 	patrocinadores.listenTo(front_controller, AgregarView.prototype.ADD, function(patrocinador) {
 		this.create(patrocinador);
+	});
+	// Bindeamos el evento de mensaje nuevo para hacer que la coleccion se
+	// actualize automaticamente (usando {update: true}). Es importante
+	// notar que no estamos escuchando el socket directamente sino mediante
+	// el Front Controller, lo cual nos da mas flexibilidad pues podemos
+	// emitir el evento en cualquier momento o cambiar la tecnologia usada
+	// sin afectar el codigo.
+	patrocinadores.listenTo(front_controller, 'socket.message', function() {
+		this.fetch({update:true});
 	});
 
 	// Arrancamos la aplicacion injectando (IoC) todas las referencias, IDs y
@@ -218,4 +278,18 @@ $(function(){
 		fc: front_controller
 	});
 
+	// Implementacion de Socket.io. Para evitar dependencia directa del mismo
+	// se reenvian los eventos del socket mediante nuestro Front Controller
+	// lo cual nos da mas flexibilidad pues podemos emitir el evento en cualquier
+	// momento o cambiar la tecnologia usada sin afectar el codigo.
+	var socket = io.connect(window.location.protocol + '//' + window.location.host);
+	socket.on('message', function (data) {
+		front_controller.trigger('socket.message', data);
+	});
+
+	// Vista del notificador
+	var notificador = new NotificadorView({
+		el: '#notificaciones',
+		fc: front_controller
+	})
 });
